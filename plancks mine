@@ -1,0 +1,52 @@
+clc
+clear all
+funcprot(0)
+
+h=6.6*(10^-34)
+k=1.38*(10^-23)
+c=3*(10^8)
+T=[600:100:1000] // Kelvin
+T0=1000
+Lambda=[0.1:0.05:20]  // micrometre
+L=Lambda*(10^-6)  // metre
+A=(8*%pi*h*c)
+
+for i=1:length(T)
+    for j=1:length(L)
+        u1(i,j)=(A/L(j)^5)/(exp((h*c)/(k*T(i)*L(j)))-1)  // Planck
+        u2(i,j)=(8*%pi*k*T(i))/(L(j)^4)  // R-J
+        u3(i,j)=(A/L(j)^5)*exp(-(h*c)/(k*T(i)*L(j)))  // Wein
+    end
+    if T(i)==T0 then
+        q=i
+    end
+    [s,t]=max(u1(i,:))
+    Lmax(i)=L(t)
+end
+
+disp(Lmax,"The values of Lmax in micrometre is = ")
+disp(T0, "The value of T0 is = ")
+
+subplot(1,3,1)
+plot(L,u1)
+xlabel("wavelenght")
+ylabel("Intensity")
+title("Planck Law at Diff Temp")
+legend('T='+ string(T) + "k")
+
+subplot(1,3,2)
+plot(L',[u1(q,:)',u2(q,:)',u3(q,:)'])
+xlabel("wavelenght")
+ylabel("Intensity")
+title("RJ law at Diff Temp")
+legend('T='+ string(T) + "k")
+
+
+subplot(1,3,3)
+T1=1 ./T
+plot(T1,Lmax)
+xlabel("wavelenght")
+ylabel("Intensity")
+title("Wien Law")
+legend('T='+ string(T) + "k")
+
